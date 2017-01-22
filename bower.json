@@ -1,7 +1,7 @@
 {
-  "name": "polymer-starter-kit",
+  "name": "PiezApp",
   "authors": [
-    "The Polymer Authors"
+    "Alex && David"
   ],
   "license": "https://polymer.github.io/LICENSE.txt",
   "dependencies": {
@@ -18,7 +18,9 @@
     "polymer": "Polymer/polymer#^1.6.0",
     "paper-button": "PolymerElements/paper-button#^1.0.14",
     "paper-input": "PolymerElements/paper-input#^1.1.22",
-    "login-form" : "git@github.com:davidigza/login-form.git"
+    "login-form" : "git@github.com:davidigza/login-form.git",
+    "splash-screen" : "git@github.com:davidigza/splash-screen.git",
+    "register-form" : "git@github.com:davidigza/register-form.git"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"
