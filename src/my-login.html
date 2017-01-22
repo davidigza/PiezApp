@@ -11,6 +11,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/splash-screen/splash-screen.html">
 <link rel="import" href="../bower_components/login-form/login-form.html">
+<link rel="import" href="../bower_components/register-form/register-form.html">
 
 <dom-module id="my-login">
     <template>
@@ -25,6 +26,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <splash-screen>
         </splash-screen>
         <login-form></login-form>
+        <register-form></register-form>
     </main>
     <footer>
     </footer>  
@@ -43,7 +45,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             },
             showRegister: function(e) {
                 e.stopPropagation();
-                console.log('register');
+                this.root.querySelector('register-form').style.transform = 'translateY(0%)';
             }
         });
     </script>
