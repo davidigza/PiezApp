@@ -7,7 +7,6 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
-
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
@@ -20,113 +19,135 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/platinum-sw/platinum-sw-elements.html">
+<link rel="import" href="../bower_components/polymerfire/polymerfire.html">
 <link rel="import" href="my-icons.html">
-
 <dom-module id="my-app">
-  <template>
-    <style>
-      :host {
-        --app-primary-color: #4285f4;
-        --app-secondary-color: black;
-
-        display: block;
-      }
-
-      app-header {
-        color: #fff;
-        background-color: var(--app-primary-color);
-      }
-      app-header paper-icon-button {
-        --paper-icon-button-ink-color: white;
-      }
-
-      .drawer-list {
-        margin: 0 20px;
-      }
-
-      .drawer-list a {
-        display: block;
-        padding: 0 16px;
-        text-decoration: none;
-        color: var(--app-secondary-color);
-        line-height: 40px;
-      }
-
-      .drawer-list a.iron-selected {
-        color: black;
-        font-weight: bold;
-      }
-      #drawer{
-        display:none;
-      }
-    </style>
-
-    <app-location route="{{route}}"></app-location>
-    <app-route
-        route="{{route}}"
-        pattern="/:page"
-        data="{{routeData}}"
-        tail="{{subroute}}"></app-route>
-
-    <app-drawer-layout fullbleed>
-      <!-- Drawer content -->
-      <app-drawer id="drawer">
-        <app-toolbar></app-toolbar>
-      </app-drawer>
-
-      <!-- Main content -->
-      <app-header-layout has-scrolling-region>
-
-        <app-header condenses reveals effects="waterfall">
-        </app-header>
-
-        <iron-pages
-            selected="[[page]]"
-            attr-for-selected="name"
-            fallback-selection="view404"
-            role="main">
-          <my-login name="login"></my-login>
-          <my-view2 name="view2"></my-view2>
-          <my-view3 name="view3"></my-view3>
-          <my-view404 name="view404"></my-view404>
-        </iron-pages>
-      </app-header-layout>
-    </app-drawer-layout>
-  </template>
-
-  <script>
-    Polymer({
-      is: 'my-app',
-
-      properties: {
-        page: {
-          type: String,
-          reflectToAttribute: true,
-          observer: '_pageChanged',
-        },
-      },
-
-      observers: [
-        '_routePageChanged(routeData.page)',
-      ],
-
-      _routePageChanged: function(page) {
-        this.page = page || 'login';
-
-        if (!this.$.drawer.persistent) {
-          this.$.drawer.close();
+    <template>
+        <style>
+        :host {
+            --app-primary-color: #4285f4;
+            --app-secondary-color: black;
+            display: block;
+            position: absolute;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
         }
-      },
+        
+        app-header {
+            color: #fff;
+            background-color: var(--app-primary-color);
+        }
+        
+        app-header paper-icon-button {
+            --paper-icon-button-ink-color: white;
+        }
+        
+        .drawer-list {
+            margin: 0 20px;
+        }
+        
+        .drawer-list a {
+            display: block;
+            padding: 0 16px;
+            text-decoration: none;
+            color: var(--app-secondary-color);
+            line-height: 40px;
+        }
+        
+        .drawer-list a.iron-selected {
+            color: black;
+            font-weight: bold;
+        }
+        
+        #drawer {
+            display: none;
+        }
+        </style>
+        <app-location route="{{route}}"></app-location>
+        <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{subroute}}"></app-route>
+        <app-drawer-layout fullbleed>
+            <!-- Drawer content -->
+            <app-drawer id="drawer">
+                <app-toolbar></app-toolbar>
+            </app-drawer>
+            <!-- Main content -->
+            <app-header-layout>
+                <app-header condenses reveals effects="waterfall">
+                </app-header>
+                <iron-pages selected="[[page]]" attr-for-selected="name" fallback-selection="view404" role="main">
+                    <my-login name="login" user="{{user}}" signed-in="{{signedIn}}"></my-login>
+                    <my-view2 name="view2"></my-view2>
+                    <my-view3 name="view3"></my-view3>
+                    <my-view404 name="view404"></my-view404>
+                </iron-pages>
+            </app-header-layout>
+        </app-drawer-layout>
+        <firebase-app name="PiezApp" api-key="AIzaSyBpCmNUCzOO1i9GQHZxUDZm0K9WtB6d0aM" auth-domain="piezapp-9800f.firebaseapp.com" database-url="https://piezapp-9800f.firebaseio.com">
+        </firebase-app>
+    </template>
+    <script>
+    Polymer({
+        is: 'my-app',
 
-      _pageChanged: function(page) {
-        // Load page import on demand. Show 404 page if fails
-        var resolvedPageUrl = this.resolveUrl('my-' + page + '.html');
-        this.importHref(resolvedPageUrl, null, this._showPage404, true);
-      },
+        properties: {
+            page: {
+                type: String,
+                reflectToAttribute: true,
+                observer: '_pageChanged',
+            },
+            user: {
+                type: Object,
+                observer: 'checkUser'
+            },
+            signedIn: {
+                type: Boolean,
+                value: false
+            }
+        },
 
-      _showPage404: function() {
-        this.page = 'view404';
-      },
+        observers: [
+            '_routePageChanged(routeData.page)',
+        ],
+
+        _routePageChanged: function(page) {
+            if (page !== '') {
+                if (this.user === null && this.signedIn !== true) {
+                    this.page = 'login';
+                } else {
+                    this.page = page || 'login';
+                }
+            } else {
+                this.page = 'login';
+            }
+
+
+            if (!this.$.drawer.persistent) {
+                this.$.drawer.close();
+            }
+        },
+
+        _pageChanged: function(page) {
+            // Load page import on demand. Show 404 page if fails
+            var resolvedPageUrl = this.resolveUrl('my-' + page + '.html');
+            this.importHref(resolvedPageUrl, null, this._showPage404, true);
+        },
+
+        checkUser: function(e) {
+            if (this.user === null) {
+                this.page = 'login';
+            } else {
+                this.page = 'view2';
+            }
+        },
+
+        _showPage404: function() {
+            this.page = 'view404';
+        },
     });
-  </script>
+    </script>
 </dom-module>

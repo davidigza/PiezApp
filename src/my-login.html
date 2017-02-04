@@ -7,46 +7,63 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
-
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/splash-screen/splash-screen.html">
 <link rel="import" href="../bower_components/login-form/login-form.html">
 <link rel="import" href="../bower_components/register-form/register-form.html">
-
 <dom-module id="my-login">
     <template>
-    <style>
-      :host {
-        display: block;
-        height: 100vh;
-      }
-    </style>
-    
-    <main> 
-        <splash-screen>
-        </splash-screen>
-        <login-form></login-form>
-        <register-form></register-form>
-    </main>
-    <footer>
-    </footer>  
-  </template>
-
+        <style>
+        :host {
+            display: block;
+            height: 100vh;
+            transition
+        }
+        
+        login-form.login {
+            transform: translateX(0%);
+        }
+        
+        register-form.register {
+            transform: translateY(0%);
+        }
+        </style>
+        <main>
+            <splash-screen>
+            </splash-screen>
+            <login-form user="{{user}}" signed-in="{{signedIn}}"></login-form>
+            <register-form></register-form>
+        </main>
+        <footer>
+        </footer>
+    </template>
     <script>
-        Polymer({
-            is: 'my-login',
-            listeners: {
-                'login': 'showLogin',
-                'register': 'showRegister'
+    Polymer({
+        is: 'my-login',
+        properties: {
+            user: {
+                type: Object,
+                notify: true
             },
-            showLogin: function(e) {
-                e.stopPropagation();
-                this.root.querySelector('login-form').style.transform = 'translateX(0%)';
-            },
-            showRegister: function(e) {
-                e.stopPropagation();
-                this.root.querySelector('register-form').style.transform = 'translateY(0%)';
+            signedIn: {
+                type: Boolean,
+                notify: true
             }
-        });
+        },
+        listeners: {
+            'login': 'showLogin',
+            'register': 'showRegister'
+        },
+
+
+        showLogin: function(e) {
+            e.stopPropagation();
+            this.root.querySelector('login-form').classList.add('login');
+        },
+        showRegister: function(e) {
+            e.stopPropagation();
+            this.root.querySelector('register-form').classList.add('register');
+        }
+    });
     </script>
 </dom-module>
