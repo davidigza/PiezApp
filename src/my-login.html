@@ -7,7 +7,6 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
-<link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/splash-screen/splash-screen.html">
 <link rel="import" href="../bower_components/login-form/login-form.html">
 <link rel="import" href="../bower_components/register-form/register-form.html">
@@ -33,6 +32,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             </splash-screen>
             <login-form user="{{user}}" signed-in="{{signedIn}}"></login-form>
             <register-form></register-form>
+            <firebase-auth id="auth" app-name="PiezApp" signed-in="{{signedIn}}" user="{{user}}">>
+            </firebase-auth>
         </main>
         <footer>
         </footer>
@@ -52,17 +53,55 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
         listeners: {
             'login': 'showLogin',
-            'register': 'showRegister'
+            'register': 'showRegister',
+            'doLogin': 'doLogin',
+            'doRegister': 'doRegister',
+            'emailLogin': 'emailLogin'
         },
 
 
         showLogin: function(e) {
             e.stopPropagation();
-            this.root.querySelector('login-form').classList.add('login');
+            var element = this.root.querySelector('login-form') || this.querySelector('login-form');
+            element.classList.add('login');
         },
         showRegister: function(e) {
             e.stopPropagation();
-            this.root.querySelector('register-form').classList.add('register');
+            var element = this.root.querySelector('register-form') || this.querySelector('register-form');
+            element.classList.add('register');
+        },
+        doLogin: function(e) {
+            this.$.auth.set('provider', e.detail);
+            this.$.auth.signInWithPopup();
+        },
+        doRegister: function(e) {
+            var user = e.detail.mail;
+            var pass = e.detail.pass;
+            var _this = this;
+            this.$.auth.createUserWithEmailAndPassword(user, pass).then(function(user){
+                if(!user.emailVerified){
+                    alert('se le enviara un correo de verificacion');
+                    user.sendEmailVerification();
+                    _this.$.auth.signOut();
+                }
+            }).catch(function(error) {
+                console.log(error.code);
+                console.log(error.message);
+            });
+        },
+        emailLogin: function(e) {
+            var user = e.detail.mail;
+            var pass = e.detail.pass;
+            var _this = this;
+            this.$.auth.signInWithEmailAndPassword(user, pass).then(function(user){
+                if(!user.emailVerified){
+                    alert('verifique su correo');
+                    _this.$.auth.signOut();
+                }
+            }).catch(function(error) {
+                 console.log(error.code);
+                console.log(error.message);
+            });
         }
     });
     </script>
